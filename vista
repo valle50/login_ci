@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="<?= base_url().'assets/'; ?>img/favicon.ico">
+    <title>Login</title>
+
+    <!-- Base Styles -->
+    <link href="<?= base_url().'assets/'; ?>css/style.css" rel="stylesheet">
+    <link href="<?= base_url().'assets/'; ?>css/style-responsive.css" rel="stylesheet">
+    <!--toastr-->
+    <link href="<?= base_url().'assets/'; ?>js/toastr-master/toastr.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+  <body class="login-body">
+
+      <div class="login-logo">
+          <img src="<?= base_url().'assets/'; ?>img/utna.png" alt="" width="180" heigth="130"/>
+      </div>
+
+      <!-- <h2 class="form-heading">login</h2> -->
+     <!--  <div class="col-lg-4"></div> -->
+      <br><br><br><br>
+      <div class="container col-lg-4 col-sm-4 col-md-4 contenedor" style="float: none;">
+
+                <section class="panel">
+
+                    <header class="panel-heading tab-dark">
+                        <ul class="nav nav-tabs">
+                            <li class="active" id="entrar">
+                                <a data-toggle="tab" href="#tab_sesion" aria-expanded="false">
+                                    <i class="fa fa-sign-in"></i>
+                                    Inicio de sesión
+                                </a>
+                            </li>
+                            <li id="registrar">
+                                <a data-toggle="tab" href="#tab_registro" aria-expanded="true">
+                                    <i class="fa fa-user"></i>
+                                    Registrarme
+                                </a>
+                            </li>
+                        </ul>
+                    </header>
+
+                    <div class="panel-body"> 
+                        <div class="tab-content">
+
+                            <div id="tab_sesion" class="tab-pane active">
+                              <form class="form-signin" id="form-login">
+
+                                <input type="text" class="form-control" placeholder="Correo o nombre de usuario" autofocus name="info_usuario">
+
+                                <input type="password" class="form-control" placeholder="Contraseña" name="pass">
+
+                                <button class="btn btn-lg btn-primary btn-block" type="submit" id="btn_login">Iniciar sesión</button>
+
+                                <label class="checkbox-custom check-success">
+                                    <input type="checkbox" value="0" id="checkbox1"> <label for="checkbox1">Recordar mi sesión</label>
+
+                                    <a class="pull-right" data-toggle="modal" href="<?= base_url().'assets/'; ?>#olvido_pass"> ¿Olvidaste tu contraseña?</a>
+                                </label>
+                              </form>
+
+                            </div>
+
+
+                            <div id="tab_registro" class="tab-pane">
+
+                                <form id="form-registro">
+                                  <!-- <fieldset id="fieldset-registro"> -->
+                                  <div class="col-lg-6 form-signin">
+                                    
+                                    <input type="text" class="form-control" placeholder="Nombre(s)" autofocus name="nombre">
+
+                                    <input type="text" class="form-control" placeholder="Apellido(s)" name="apellidos">
+
+                                    <input type="text" class="form-control" placeholder="Correo electrónico"  name="correo">
+                                     
+                                      <div class="radio-custom radio-primary">
+                                        <input type="radio" value="m" checked="checked" name="sexo" id="m">
+                                        <label for="m">Masculino</label>
+
+                                        <input type="radio" value="f" name="sexo" id="f">
+                                        <label for="f">Femenino</label>
+                                      </div>
+                                  </div>
+              
+                                  <div class="col-lg-6 form-signin">
+                                      
+                                      <input type="text" class="form-control" placeholder="Nombre de usuario" name="nombre_usuario">
+
+                                      <input type="password" class="form-control" placeholder="Contraseña" name="pass">
+
+                                      <input type="password" class="form-control" placeholder="Repetir contraseña" name="confirm_pass">
+                                      
+                                      <button class="btn btn-lg btn-primary btn-block" type="submit" id="btn_registrar">Enviar</button>
+                                  </div>
+                                  <!-- </fieldset> -->
+                                </form>
+                                  
+                            </div>
+
+                        </div>
+                    </div>
+
+                </section>
+
+
+              <!-- Modal -->
+              <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="olvido_pass" class="modal fade">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+
+                          <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title">¿Olvidaste tu contraseña?</h4>
+                          </div>
+
+                          <div class="modal-body">
+
+                              <label>Ingresa el correo electrónico con el que te registraste para recuperar tu contraseña</label><br><br>
+
+                              <input type="text" name="correo" id="correo" placeholder="Correo electrónico" autocomplete="off" class="form-control">
+                          </div>
+
+                          <div class="modal-footer">
+                              <button data-dismiss="modal" class="btn btn-default" type="button">Cancelar</button>
+                              <button class="btn btn-success" type="button" id="btnRecupera">Enviar</button>
+                          </div>
+
+                      </div>
+                  </div>
+              </div>
+              <!-- modal -->
+      </div>
+
+
+   <!--jquery-1.10.2.min-->
+   <script src="<?= base_url().'assets/'; ?>js/jquery-3.3.1.min.js"></script>
+   <!--Bootstrap Js-->
+   <script src="<?= base_url().'assets/'; ?>js/bootstrap.min.js"></script>
+   <!--toastr-->
+  <script src="<?= base_url().'assets/'; ?>js/toastr-master/toastr.js"></script>
+
+   <script>
+     $(document).ready(function(){
+ 
+        jQuery.fn.toggleAttr = function(attr) {
+          return this.each(function() {
+            var $this = $(this);
+            $this.attr(attr) ? $this.removeAttr(attr) : $this.attr(attr, attr);
+          });
+        };
+
+        //Amplia el tamaño del tab de registro
+       $('#entrar').click(function(){
+
+         $('.contenedor').removeClass('col-lg-6').addClass('col-lg-4');
+       });
+
+       $('#registrar').click(function(){
+
+         $('.contenedor').removeClass('col-lg-4').addClass('col-lg-6');
+       });
+
+
+        /*REGISTRO*/
+        $('#btn_registrar').click(function(e){
+
+            e.preventDefault(); 
+            var _this = $(this);                       
+  
+            $.ajax({            
+                type:"POST",
+                url: "<?= base_url() ?>Registro/validar",
+                dataType: "JSON",
+                data: $("#form-registro").serialize(),
+                beforeSend: function(){
+
+                  $(_this).prop('disabled', true);
+                  $(_this).html('verificando datos...');
+                }
+            })
+            .done(function(data){
+
+                //Si ya no hay ningun campo por validar, se define el objeto mensajes en php
+                if(data.mensajes != undefined){
+
+                  toastr.success(data.mensajes, '!Registro completado¡', {timeOut: 8000});
+
+                  $('.registro').remove();
+                  activeTab('tab_sesion');
+                  $('#form-registro').get(0).reset(); 
+                  $('#entrar').click(); 
+                  
+                }else{//Si aún hay campos por validar mostrará los mensajes
+
+                  tags_validacion(
+                      "#form-registro >div >input",
+                      data,
+                      "registro"); //clase que se le agregará a los mensajes de validación
+                }                            
+
+            })
+            .fail(function(data){                
+                console.error('Hubo un problema al enviar datos de registro.');
+                console.log(data.responseText);
+            })
+            .always(function(data){
+
+                setTimeout(function(){ 
+                    $(_this).prop('disabled', false);
+                    $(_this).html('Enviar');
+                }, 600);
+            });
+
+        });
+
+
+        /*LOGIN*/
+        $('#btn_login').click(function(e){
+
+          e.preventDefault();
+          var _this = $(this); 
+
+          $.ajax({
+              type:"POST",
+              url: "<?= base_url() ?>Login/validar",
+              dataType: "JSON",
+              data: $("#form-login").serialize(),
+              beforeSend: function(){
+
+                $(_this).prop('disabled', true);
+                $(_this).html('verificando...');
+              }
+          })          
+          .done(function(data){
+
+              tags_validacion( //Mientras siga regresando validaciones, las irá mostrando
+                      "#form-login >input",
+                      data,
+                      "login"); 
+
+              //Al pasar las validaciones, regresará mensajes como 'contraseña incorrecta','correo incorrecto'
+              if(data.mensajes != undefined){
+
+                $('.login').remove();
+                toastr.warning(data.mensajes, 'Notificación', {timeOut: 4000});
+              }
+
+              //Si pasa todos los procesos, regresará un true indicando que puede ingresar y se le re direcciona
+              if(data.success != undefined){
+                window.location = "<?= base_url().'Home/Index' ?>";
+              }
+
+          })
+          .fail(function(data){            
+              console.error('Hubo un problema al enviar datos de login.');
+              console.log(data.responseText);
+          })
+          .always(function(){
+
+              setTimeout(function(){ 
+                  $(_this).prop('disabled', false);
+                  $(_this).html('Iniciar sesión');
+              }, 500);
+          });
+
+        });
+
+
+        /*RECUPERA CONTRASEÑA*/
+        $('#btnRecupera').click(function(){
+
+           var _this = $(this);
+
+           $.ajax({
+              type: "POST",
+              url: "<?= base_url() ?>Login/correo_recuperacion",
+              dataType: "JSON",
+              data: $('#correo').serialize(),
+              beforeSend: function(){
+
+                $(_this).prop('disabled', true);
+                $(_this).html('verificando...');
+              }
+           })
+           .done(function(data){
+              
+              //Seguirá mostrando las validaciones mientras existan
+              tags_validacion(
+                  ".modal-body >input",
+                  data,
+                  "recupera"
+                );
+
+              //Si envia exitosamente o no el correo, muestra notificación con mensaje
+              if(data.mensajes != undefined){
+
+                $('#correo').val('');
+                $('#olvido_pass').modal('hide');
+                toastr.warning(data.mensajes, 'Notificación', {timeOut: 4000});
+              }
+
+           })
+           .fail(function(data){
+                console.error('Hubo un problema al enviar datos de recuperación de contraseña.');
+                console.log(data.responseText);
+           })
+           .always(function(){
+
+                setTimeout(function(){ 
+                  $(_this).prop('disabled', false);
+                  $(_this).html('Enviar');
+                }, 500);
+           });
+
+        });
+
+
+        /*EVENTOS CUANDO MODAL SE OCULTA/MUESTRA*/
+        $("#olvido_pass").on("shown.bs.modal", function(){ 
+            $('#correo').focus();
+        });
+
+
+        $('#olvido_pass').on('hidden.bs.modal', function(e){
+            $('#correo').val('');
+            $('.recupera').remove();
+        });
+
+
+        /*ACTIVA TABS*/
+        function activeTab(active){
+          $('.nav-tabs a[href="#'+ active +'"]').tab('show');
+        }
+
+
+        //Muestra los mensajes de validaciones debajo de su respectivo input
+        function tags_validacion(find_inputs, json_array, tag_class){
+
+            $('.'+tag_class).remove();
+            var tag_msg = find_inputs.replace(/input/g,'p');//reemplaza input por p
+
+            for(var i = 0; i < $(find_inputs).length; i++){
+           
+                $.each(json_array, function(key, element) {
+
+                   if($(find_inputs)[i].getAttribute('name') == key){
+
+                      $('<p>'+element+'</p>').insertAfter($(find_inputs)[i]);
+                      $(tag_msg).addClass(tag_class); 
+
+                    }
+                });              
+            }
+
+            //individual
+            /*var inputs = $('#form-registro > div > input'); 
+            
+            $('.validate').remove();
+
+            for(var i = 0; i < inputs.length; i++){
+           
+                $.each(data, function(key, element) {
+                   if(inputs[i].getAttribute('name') == key){
+
+                      $('<p>'+element+'</p>').insertAfter(inputs[i]);
+                      $('#form-registro > div > p').addClass('validate');                      
+                    }
+                });              
+            }*/
+        }
+
+          
+     });
+   </script>
+
+</body>
+
+</html>
