@@ -1,0 +1,73 @@
+<?php 
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Registro_model extends CI_Model{
+
+	public function __construct()
+    {
+        parent::__construct();
+    }
+
+	public function create_usuario($data){
+
+		$this->db->insert('usuarios', $data);
+		return $this->db->insert_id();
+	}
+
+
+	public function verifica_correo($user_verification_key){
+
+		$query = $this->db->where('verification_key', $user_verification_key)
+				->where('correo_verificado', 'no')
+				->get('usuarios');
+
+		if($query->num_rows() > 0){
+
+			$data = array('correo_verificado' => 'si');
+
+			$this->db->where('verification_key', $user_verification_key)
+					 ->update('usuarios', $data);
+			/*$this->db->where('verification_key', $user_verification_key);
+			$this->db->update('usuarios', $data);*/
+
+			return true;
+
+		}else{
+
+			return false;
+		}
+	}
+
+
+	public function verifica_datos($id_usuario){
+
+		$query = $this->db->where('id', $id_usuario)
+			->where('datos_completados', 'no')
+			->get('usuarios');
+
+		if($query->num_rows() > 0){
+
+			return FALSE;//no ha completaado
+		}else{
+
+			return TRUE;//ha completado
+		}
+	}
+
+
+	public function completa_registro($data){
+
+		$query = $this->db->set($data)
+			->where('id',  $this->session->userdata('id'))
+			->update('usuarios');
+
+		if($this->db->affected_rows() == 1){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
+	}
+
+
+}
+?>
