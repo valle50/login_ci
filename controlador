@@ -1,0 +1,134 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Registro extends CI_Controller{
+
+	public function __construct(){
+
+		parent::__construct();
+
+		if($this->session->userdata('id')){
+			redirect(base_url().'Home/Index');
+		}
+
+		$this->load->library('form_validation');//librería para validar inputs de forms
+		$this->load->model('login_registro/registro_model');
+	}
+
+
+	public function index(){
+
+		$this->load->view('login/login_registro');
+	}
+
+	public function validar(){
+
+		$this->form_validation->set_rules('nombre', 'nombre', 'trim|required|min_length[3]');
+		$this->form_validation->set_rules('apellidos', 'apellidos', 'trim|required|min_length[3]');
+		$this->form_validation->set_rules('correo', 'correo electrónico', 'required|trim|valid_email|is_unique[usuarios.correo]');
+		$this->form_validation->set_rules('nombre_usuario', 'nombre de usuario', 'trim|required|min_length[3]|max_length[12]|is_unique[usuarios.nombre_usuario]');
+		$this->form_validation->set_rules('pass', 'contraseña', 'required|trim|min_length[8]');
+		$this->form_validation->set_rules('confirm_pass', 'confirmar contraseña', 'required|trim|matches[pass]');
+
+
+		if($this->form_validation->run()){
+
+			$verification_key = md5(rand());
+			$pass_encriptada = password_hash($this->input->post('pass', true), PASSWORD_BCRYPT);
+
+			$data = array(
+				'nombre' => $this->input->post('nombre', true),
+				'apellidos' => $this->input->post('apellidos', true),
+				'sexo' => $this->input->post('sexo', true),
+				'correo' => $this->input->post('correo', true),
+				'nombre_usuario' => $this->input->post('nombre_usuario', true),
+				'pass' => $pass_encriptada,
+				'verification_key' => $verification_key
+			);
+
+			$user_id = $this->registro_model->create_usuario($data);
+
+			if($user_id  > 0){
+
+				$asunto = "Por favor verifique su correo electrónico para inicar sesión.";
+				$mensaje = "
+          			<p>Bienvenido ".$this->input->post('nombre')."</p>
+          			<p>Este es un correo de verificación de correo electrónico del sistema <b>UTNA-Auth</b>. Para completar tu proceso de registro en la plataforma y poder <b>iniciar sesión</b>, da click en el siguiente link para verificar tu correo electrónico: <b><a href='".base_url()."Registro/user_verification_key/".$verification_key."'>Verificar mi correo electrónico </a></b>.</p>
+          			<p>Al momento de dar click en el enlace, tu correo será verificado y podrás iniciar sesión para completar tus datos de registro.</p>
+          			<p>Gracias.</p>";
+
+
+          		$config = array(
+          			'protocol' => 'smtp',
+          			'smtp_host' => 'ssl://smtp.gmail.com',
+          			'smtp_port' => 465,
+          			'smtp_user' => 'chrisvalle21@gmail.com',
+          			'smtp_pass' => 'chrisvalle50.',
+          			'mailtype' => 'html',
+          			'charset' => 'utf-8',
+          			'word_wrap' => TRUE
+          		);
+          		/*$config = array(
+          			'protocol' => 'smtp',
+          			'smtp_host' => 'ssl://in-v3.mailjet.com',
+          			'smtp_port' => 465,//465,
+          			'smtp_user' => '36a362e1f069a0c54706d4151b8d972d',
+          			'smtp_pass' => '764c641aeec1870d3cbb77a4c4debe73',
+          			'mailtype' => 'html',
+          			'charset' => 'utf-8',
+          			'word_wrap' => TRUE
+          		);*/
+
+          		$this->load->library('email', $config);
+          		$this->email->set_newline("\r\n");
+          		$this->email->from('chrisvalle21@gmail.com','Christopher Fernando M.V');
+          		$this->email->to($this->input->post('correo'));
+          		$this->email->subject($asunto);
+          		$this->email->message($mensaje);//$this->load->view('email',null, true)
+
+          		if($this->email->send()){
+
+          			//$this->session->set_flashdata('msg_correo', 'Revisa tu correo electrónico para completar el proceso de registro.');
+          			echo json_encode(array('mensajes' => 'Revisa tu correo electrónico para completar el proceso de registro.'));
+
+          		}else{
+
+          			echo json_encode(array('mensajes' => 'Hubo un problema al enviar el correo.'));
+          		}        		
+
+			}
+
+		}else{//si no se han validado todos los input envía array de mensajes de validación
+			//echo validation_errors();
+			echo json_encode($this->form_validation->error_array());
+		}
+
+	}
+
+
+	public function user_verification_key(){
+
+		if($this->uri->segment(3)){
+
+			$user_verification_key = $this->uri->segment(3);
+
+			if($this->registro_model->verifica_correo($user_verification_key)){
+
+				$data = array(
+						'mensaje' => 'Se ha verificado tu correo electrónico exitósamente, puedes iniciar sesión <a href = "'.base_url().'"> Aquí </a>',
+						'img' => 'img/email-verification.png'
+					);
+			}else{
+
+				$data = array(
+						'mensaje' => 'Este link ha expirado.',
+						'img' => 'img/link2.png'
+					);
+			}
+
+			$this->load->view('login/email_verificado', $data);
+		}
+	}
+
+
+}
