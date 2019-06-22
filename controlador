@@ -62,8 +62,8 @@ class Registro extends CI_Controller{
           			'protocol' => 'smtp',
           			'smtp_host' => 'ssl://smtp.gmail.com',
           			'smtp_port' => 465,
-          			'smtp_user' => 'chrisvalle21@gmail.com',
-          			'smtp_pass' => 'chrisvalle50.',
+          			'smtp_user' => '',
+          			'smtp_pass' => '',
           			'mailtype' => 'html',
           			'charset' => 'utf-8',
           			'word_wrap' => TRUE
@@ -72,8 +72,8 @@ class Registro extends CI_Controller{
           			'protocol' => 'smtp',
           			'smtp_host' => 'ssl://in-v3.mailjet.com',
           			'smtp_port' => 465,//465,
-          			'smtp_user' => '36a362e1f069a0c54706d4151b8d972d',
-          			'smtp_pass' => '764c641aeec1870d3cbb77a4c4debe73',
+          			'smtp_user' => '',
+          			'smtp_pass' => '',
           			'mailtype' => 'html',
           			'charset' => 'utf-8',
           			'word_wrap' => TRUE
